@@ -1,0 +1,851 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Igede Smart Tutor</title>
+    <style>
+        /* Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(to bottom right, #0f0696, #1c0cac);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            padding: 1rem;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+        }
+
+        .header {
+            width: 100%;
+            padding: 1.25rem 0;
+            background-color: rgba(0, 0, 0, 0.7);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            margin-bottom: 1.5rem;
+            border-radius: 0.5rem;
+        }
+
+        .header h1 {
+            font-size: 1.875rem;
+            font-weight: bold;
+        }
+
+        .view {
+            width: 100%;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .card {
+            width: 100%;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 0.5rem;
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.2);
+            padding: 1.5rem;
+            color: #1f2937;
+        }
+
+        h2 {
+            font-size: 1.25rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+
+        .input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .button {
+            display: inline-block;
+            padding: 0.75rem 1.5rem;
+            background-color: #4a1d96;
+            color: white;
+            border: none;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            text-align: center;
+        }
+
+        .button:hover {
+            background-color: #6d28d9;
+        }
+
+        .button:disabled {
+            background-color: #9ca3af;
+            cursor: not-allowed;
+        }
+
+        .button-outline {
+            background-color: transparent;
+            border: 1px solid #4a1d96;
+            color: #4a1d96;
+        }
+
+        .button-outline:hover {
+            background-color: rgba(74, 29, 150, 0.1);
+        }
+
+        .button-destructive {
+            background-color: #ef4444;
+            font-size: 0.875rem;
+            padding: 0.5rem 1rem;
+        }
+
+        .button-destructive:hover {
+            background-color: #dc2626;
+        }
+
+        .welcome-message {
+            margin-top: 1rem;
+        }
+
+        .welcome-text {
+            font-size: 1.5rem;
+            color: #4a1d96;
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        .section-buttons {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 0.75rem;
+            margin-top: 1rem;
+        }
+
+        @media (min-width: 640px) {
+            .section-buttons {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        /* Quiz View Styles */
+        .quiz-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .progress-container {
+            width: 100%;
+            height: 0.5rem;
+            background-color: #e5e7eb;
+            border-radius: 9999px;
+            margin-bottom: 0.5rem;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background-color: #4a1d96;
+            border-radius: 9999px;
+            transition: width 0.3s ease;
+        }
+
+        .quiz-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+
+        .question-text {
+            font-size: 1.5rem;
+            font-weight: 500;
+            margin-bottom: 1rem;
+        }
+
+        .options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .option {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            border: 1px solid #d1d5db;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .option:hover {
+            background-color: #f3f4f6;
+        }
+
+        .option.selected {
+            background-color: #f3f4f6;
+        }
+
+        .option.correct {
+            background-color: #d1fae5;
+            border-color: #10b981;
+        }
+
+        .option.incorrect {
+            background-color: #fee2e2;
+            border-color: #ef4444;
+        }
+
+        .option.disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .radio-circle {
+            width: 1.25rem;
+            height: 1.25rem;
+            border-radius: 50%;
+            border: 1px solid #9ca3af;
+            margin-right: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .option.selected .radio-circle {
+            border-color: #4a1d96;
+            background-color: #4a1d96;
+        }
+
+        .option.correct .radio-circle {
+            border-color: #10b981;
+            background-color: #10b981;
+        }
+
+        .option.incorrect .radio-circle {
+            border-color: #ef4444;
+            background-color: #ef4444;
+        }
+
+        .radio-dot {
+            width: 0.5rem;
+            height: 0.5rem;
+            border-radius: 50%;
+            background-color: white;
+            display: none;
+        }
+
+        .option.selected .radio-dot,
+        .option.correct .radio-dot,
+        .option.incorrect .radio-dot {
+            display: block;
+        }
+
+        .option-text {
+            font-size: 1.5rem;
+        }
+
+        .option-status {
+            margin-left: auto;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .correct-mark {
+            color: #10b981;
+        }
+
+        .incorrect-mark {
+            color: #ef4444;
+        }
+
+        .navigation-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 1.5rem;
+        }
+
+        /* Result View Styles */
+        .result-content {
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .result-name {
+            font-size: 1.125rem;
+            font-weight: 500;
+            color: #4a1d96;
+        }
+
+        .result-summary {
+            margin: 0.5rem 0;
+        }
+
+        .result-message {
+            font-size: 1.25rem;
+            margin-top: 0.5rem;
+        }
+
+        .result-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        @media (min-width: 640px) {
+            .result-buttons {
+                flex-direction: row;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Welcome To Igede Smart Assistant</h1>
+        </div>
+
+        <!-- User Registration View -->
+        <div id="userRegView" class="view">
+            <div class="card">
+                <h2>Enter Your Name</h2>
+                <input type="text" id="userName" placeholder="Your full name" class="input">
+                <button id="enterBtn" class="button">Enter</button>
+
+                <div id="welcomeMessage" class="welcome-message hidden">
+                    <div class="welcome-text">Welcome, <span id="userNameDisplay"></span>! Please choose a section to attempt.</div>
+                    <div class="section-buttons">
+                        <button id="cultureBtn" class="button button-outline">Culture</button>
+                        <button id="historyBtn" class="button button-outline">History</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quiz View -->
+        <div id="quizView" class="view hidden">
+            <div class="card">
+                <div class="quiz-header">
+                    <h2 id="sectionTitle">SECTION</h2>
+                    <button id="quitBtn" class="button button-destructive">Quit Quiz</button>
+                </div>
+
+                <div class="progress-container">
+                    <div id="progressBar" class="progress-bar"></div>
+                </div>
+                <div class="quiz-info">
+                    <p id="questionCounter">Question 1 of 30</p>
+                    <p id="answeredCounter">Answered: 0 / 30</p>
+                </div>
+
+                <p id="questionText" class="question-text"></p>
+
+                <div id="optionsContainer" class="options-container"></div>
+
+                <div class="navigation-buttons">
+                    <button id="prevBtn" class="button button-outline">Previous</button>
+                    <button id="nextBtn" class="button">Next</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Result View -->
+        <div id="resultView" class="view hidden">
+            <div class="card">
+                <h2>Quiz Results</h2>
+
+                <div class="result-content">
+                    <p class="result-name">Dear <span id="resultUserName"></span>,</p>
+                    <p id="answeredSummary" class="result-summary"></p>
+                    <p id="scoreSummary" class="result-summary"></p>
+                    <p id="resultMessage" class="result-message"></p>
+                </div>
+
+                <div class="result-buttons">
+                    <button id="nextSectionBtn" class="button button-outline">Next Section</button>
+                    <button id="restartBtn" class="button">Restart Quiz</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Configuration
+        const PASSING_SCORE = 0.7;
+        const QUESTIONS_PER_SECTION = 30;
+
+        // Quiz Data
+        const sections = {
+            culture: {
+                questions: [
+                    { q: "What is the most popular traditional festival in Igede land?", options: ["Igede Agba", "Durbar", "Igede Egwu", "Ofala"],},
+                    { q: "The Supreme Traditional Council Meeting of the Igede Elders is called______?", options: ["Ihi", "Erhu", "Aligwu", "Epwedii"],},
+                    { q: "Which colours are traditionally featured in Ogodogodo, the principal cultural attire of the Igede people?", options: ["Blue, White and Black", "Black and White", "Red, Black and White", "Blue, White and Green"] },
+                    { q: "Which language do the Igede people speak?", options: ["Igede", "Tiv", "Idoma", "Hausa"] },
+                    { q: "Which of the following market days is traditionally designated for the celebration of the Igede Agba Festival?", options: ["The first Ihiobilla market day in September", "The first Ihio market day in September", "The first Ihiokwu market day in September", "The first Ih’igile market day in September"] },
+                    { q: "Which food crop is traditionally honored as the king of all food crops in Igede culture?", options: ["Iju", "Achi", "Imana", "Otakom"] },
+                    { q: "What is the traditional method of storytelling in Igede culture?", options: ["Writing", "Oral tradition", "Stone carvings", "Dance"],},
+                    { q: "What is a common Igede soup delicacy?", options: ["Ehia", "Ugbodu", "Apwu", "Ibehi"] },
+                    { q: "What does the kola nut symbolize in Igede culture?", options: ["War", "Death", "Wealth", "Peace and hospitality"],},
+                    { q: "Which of the following signifies the official recognition of marriage between a man and a woman in Igede tradition?", options: ["Sharing kola nuts and drinking palm wine", "Receiving a pastor’s blessing during a church ceremony", "Payment of dowry and firing of traditional gunshots", "Celebrating with traditional songs and dances"],},
+                    { q: "Idelle, Igabwu, Itakpa, and Oju are modern names of certain clans in the Igede Nation. Which of the following options correctly lists their traditional names in the same order?", options: ["Anyi-Odum, Okpalotu, Ada-Otakpa, and Onyi-Okpogo", "Idelle, Igabwu, Itakpa, and Oju", "Ega, Ameka, Ukpute, and Odaleko", "Adiko, Obijago, Ogengeng, and Odubo"],},
+                    { q: "Which of the following villages is traditionally recognized as the rightful host of the Epwedii festival in the Igede Nation?", options: ["Obarike-Ito", "Ochodu-Ukpa", "Oju Local Government Secretariat", "Ojegbe"],},
+                    { q: "According to Igede culture, what typically marks the beginning of every meeting or gathering?", options: ["Libations", "Incantations", "Reading the Holy Bible", "Praise and Worship"],},
+                    { q: "Which of the following is most highly valued in Igede culture?", options: ["Wealth (Money)", "Physical appearance (Beauty and Handsomeness)", "Ownership of property (Land and Houses)", "Integrity and good name (Character and Reputation)"],},
+                    { q: "According to Igede tradition, what is the primary basis for sharing items among people at a gathering?", options: ["Seniority in government positions", "Seniority in age", "Size of personal wealth","He must be a warrior"],},
+                    { q: "__________ leaf is used as a symbol of peace in Igede culture?", options: ["Upwu Engwu", "Upwu Ugwu", "Upwu Utu", "Upwu Ejuju"],},
+                    { q: "How many Market are in Igede?", options: ["2", "3", "5", "4"] },
+                    { q: "According to Igede cultural practices, which is identified as the first market day?", options: ["Ihiejwo", "Ihigile", "Ihio", "Ihiobila"] },
+                    { q: "The highest Traditional Stool of the Igede People is called?", options: ["Ad'Oju ", "Ad'Obi ", "Ad'Utu", "Ad'Agba"] },
+                    { q: "Which of the following is the culturally appropriate way to show respect when greeting an elder or senior?", options: ["Prostrating", "Bowing", "Shaking hands", "Kneeling"] },
+                    { q: "Which deity is regarded as the guardian of morality and enforcer of social order in Igede society?", options: ["Akpang", "Ohe Igogo", "Ojiga", "Alegwu"] },
+                    { q: "According to Igede customs, on which of the following market days is it considered inappropriate to hold burial ceremonies?", options: ["Ihio", "Ihiobila", "Ihiejwo", "Ihiokwu"] },
+                    { q: "Which of the following options lists traditional dances of the Igede People?", options: ["Ogirinye, Akatanka, Ikpirigidi, and Adiya", "Atilogwu, Ekpe, Ijele, and Obon", "Swange, Kwagh-hir, Takera, and Hinga", "Batta, Bura Bonsuwe, Koroso, and Oti"] },
+                    { q: "Which of the following best describes the traditional marriage system of the Igede people?", options: ["Monogamy", "Polygamy", "None of the above", "All of the above"] },
+                    { q: "Owo, Ibilla, Ainu, Ito and Uwokwu are modern names of some Clans in Igede Nation. Which one of the following options represents their traditional names in the order they appear above?", options: ["Ochim-Aadu, Ugbeyikum, Ada-Ainu, Ada-Oto and Ololega", "Ebonda, Opirikwu, Okpoma, Itogo and Ikwokwu", "Ohoho, Ichakobe, Otakini, Ugbodom and Ebenta", "Ochoro, Obachita, Otunche, Itipala and Ekpong"] },
+                    { q: "Ada, Anchim, Oye, Ukpa and Oboru are modern names of some Clans in Igede Nation. Which one of the following options represents their traditional names in the order they appear above?", options: ["Uchuo, Okutungbe, Ochodu, Akpachayi and Ohuhu", "Ohirigwe, Omu, Andibilla, Ojokwe and Ogore", "Adum, Ohuma, Uchenyum, Obusa and Ikachi", "Ada, Ocheche, Ugbodu, Amono and Ogbagba"] },
+                    { q: "What is the name of the most important traditional cloth used in Igede cultural attire?", options: ["Ogodogodo", "Apwu", "Oba", "Ugba odakwuru"] },
+                    { q: "In Igede culture, what is the traditional term used to refer to an age grade?", options: ["Alikpa", "Idirihu", "Ikolobia", "Iyeno"] },
+                    { q: "What is the traditional name for the elders’ council in Igede society?", options: ["Ikolobia", "Alikpa", "Aligwu", "Igabwo"] },
+                    { q: "Which of the following options correctly represents the traditional sequence of market days in Igede culture, from the first to the last?", options: ["Ihio, Ihiobilla, Ihiejwo, Ihiokwu, Ihigile", "Ihiobilla, Ihio, Ihiokwu, Ihigile, Ihio", "Ihigile, Ihio, Ihiobilla, Ihiejwo, Ihiokwu", "Ihiejwo, Ihigile, Ihio, Ihiobilla, Ihiokwu"] },		
+                ],
+                answers: [
+                    "Igede Agba",
+                    "Epwedii",
+                    "Blue, White and Black",
+                    "Igede",
+                    "The first Ih’igile market day in September",
+                    "Iju",
+                    "Oral tradition",
+                    "Ehia",
+                    "Peace and hospitality",
+                    "Payment of dowry and firing of traditional gunshots",
+                    "Anyi-Odum, Okpalotu, Ada-Otakpa, and Onyi-Okpogo",
+                    "Ojegbe",
+                    "Libations",
+                    "Integrity and good name (Character and Reputation)",
+                    "Seniority in age",
+                    "Upwu Utu",
+                    "5",
+                    "Ihigile",
+                    "Ad'Utu",
+                    "Bowing",
+                    "Akpang",
+                    "Ihiokwu",
+                    "Ogirinye, Akatanka, Ikpirigidi, and Adiya",
+                    "Polygamy",
+                    "Ochim-Aadu, Ugbeyikum, Ada-Ainu, Ada-Oto and Ololega",
+                    "Ada, Ocheche, Ugbodu, Amono and Ogbagba",
+                    "Ogodogodo",
+                    "Alikpa",
+                    "Igabwo",
+                    "Ihigile, Ihio, Ihiobilla, Ihiejwo, Ihiokwu"
+                ],
+            },
+            history: {
+                questions: [
+                    { q: "Oju Local Government Council was created in which year?", options: ["January 1976", "February 1976", "March 1976", "April 1976"]},
+                    { q: "The Igede people are predominantly found in which Nigerian state?", options: ["Kogi", "Benue", "Plateau", "Taraba"]},
+                    { q: "The creation of Obi Local Government Council took place in _______?",  options: ["October 1, 1990", "January 15, 1966", "October 10, 1996", "February 14, 2000"]},
+                    { q: "The migration of the Igede people from Ora to Opiny’Igede occurred during which period?",  options: ["16th Century, around mid 1500s", "17th Century, around mid 1600s", "18th Century, around mid 1700s", "19th Century, around mid 1800s"]},
+                    { q: "Identify the principal grievance that prompted the Ogbuloko War against British forces:", options: ["British discrimination", "Land disputes", "British colonial domination", "Imposition of kingship"] },
+                    { q: "Ogbuloko Ukpata Ogoji hailed from which Igede clan?", options: ["Ada (Ada)", "Ụkpa (Amọnọ)", "Oye (Ugbodu)", "Idelle (Anyị-Odum)"] },
+                    { q: "During which of the following periods was the Ogbuloko War fought?", options: ["1926 – 1929", "1914 – 1917", "1932 – 1939", "1921 – 1925"]},
+                    { q: "Which historical figure is honored as the forefather of the Igede people?", options: ["Othman Dan Fodio", "Chief Jeremiah Awolowo", "Agba Akpen", "Chief Michael Okpara"]},
+                    { q: "According to Igede oral history, how many siblings did the ancestral father of the Igede people have?", options: ["3", "5", "7", "11"]},   
+                    { q: "Who among the following were children of Agba Akpen?", options: ["Ikpoto, Jukun, Hausa, Igede and Bachama", "Alege, Bette, Bendi, Bekwara, and Igede", "Igede, Agatu, Hausa, Yoruba and Igbo", "Igede, Igala, Tiv, Igbira and Gbagi"]},   
+                    { q: "According to tradition, which place is recognized as the original homeland of the Igede ethnic group?", options: ["Ora, Edo State", "Ofa, Kwara State", "Lokoja, Kogi State", "Abuja, Federal Capital Territory"]},
+            	    { q: "Ambassador Ogah Okwoche, the first and only Igede person appointed as a Nigerian ambassador, was posted to which country?", options: ["United States of America", "Republic of South Africa", "United Kingdom", "France"]},
+                    { q: "What is the total number of Local Government Councils predominantly occupied by the Igede people in Benue State?",options: ["1", "2", "3", "4"]},
+                    { q: "Ogbuloko Ukpata Ogoji married four wives. What were their names?",  options: ["Enyi, Eneyi, Ujor and Igele", "Erima, Ichiko, Eneyi and Okpa", "Adiya, Inori, Uregwu and Okpeje",  "Adiya, Okpunyi, Igele and Ujor",]}, 
+                    { q: "Who is the notable Igede son credited with translating the first Igede Bible from English language?", options: ["Rev. Dr. John Ikoni", "Rev. Dr. John Ode Adima", "Rev. David Igiri Uwondo", "Rev. Peter Onahi Adikpe"]},
+                    { q: "Who among the following Igede individuals served as the traditional ruler of the entire Idoma Kingdom?", options: ["Chief Prince Dr. Ogiri Ajene", "Hon. Chief Ogo Okpabi", "HRH Chief Ikande Idikwu", "HRH Chief Abraham Ajene Okpabi"]},
+                    { q: "Which one of the following is the first Hospital/Clinic in Igede land?", options: ["General Hospital, Oju, Oju LGC", "Bethesda Hospital, Ikachi-Ukpa, Oju LGC", "General Hospital, Ito, Obi LGC", "The Health Centre, Obarike Ito, Obi LGC"]},
+                    { q: "What is the name of the first secondary school established in Igede land?", options: ["Saint Joseph’s Secondary School, Ito", "Methodist High School, Ainu", "Government Secondary School, Ikachi", "Government Secondary School, Obusa"]},
+                    { q: "What was the major reason for the Igede migration from Ora?",  options: ["War and conflicts", "Search for fertile land", "Religious expansion", "Trade opportunities"]}, 
+                    { q: "What is the name of the first Igede person to be appointed Senior Special Adviser to the President of the Federal Republic of Nigeria?", options: ["Professor John Odo Ibu", "Professor John Igoli", "Professor Peter Agogo", "Professor Ode Ojowu"]},   
+                    { q: "What is the name of the river that parted into seven tributaries during the Igede people's migration, allowing them to safely cross into their present land after spiritual sacrifices by the elders?",  options: ["River Niger", "River Oyongo", "River Benue", "River Katsina Ala"]},     
+                    { q: "Who was the first individual to represent the Igede people in the Nigerian Federal House of Representatives?", options: ["Chief Hon. Atini Idikwu", "RT. Hon. David Agada Ogewu", "Chief San Okwu", "Chief Bright Igodo"]},       
+                    { q: "On what date was Obi Local Government Council carved out of the Oju Local Government Council?", options: ["1st October 1996", "1st October 1997", "1st October 1998", "1st October 1999"]},    
+                    { q: "The first primary school in Igede Land is which of the following?", options: ["LGEA Primary School, Ukpa Centre", "LGEA Primary School, Ainu Centre", "LGEA Pilot Primary School, Ibilla Centre", "LGEA Primary School, Ohuhu, Owo"]},
+                    { q: "Who was the first Igede person to be appointed a Commissioner in the Government of Benue State?",  options: ["Prof. John Odo Ibu", "Amb. Ogah Okwoche", "Mr Moses Ajima", "Prof. Gabriel Agwu Igwe"]},
+                    { q: "Who was the first female Chairperson of Obi Local Government Council?", options: ["Justice Mrs. Deborah Musa", "Mrs. Evelyn Okwe", "Mrs. Erebe Agnes Uleko", "Pharm. Mrs. Margret Oga, Ph.D"]},
+                    { q: "Who was the first female Chairperson of Oju Local Government Council?", options: ["Dr Pastor Mrs Becky Enenche", "Mrs. Evelyn Ichiko Okwe", "Justice Mrs. Deborah Musa", "Dr. Mrs Kate Ogah"]},  
+                    { q: "What is the name of the first Professor in Igede Land?", options: ["Prof. John Odoh Ibu", "Prof Agwu G. Igwue,", "Prof. Isaac Ode", "Prof. Ode Ojowu"]},
+                    { q: "_____ was the first Igede indigene to serve as the Deputy Governor of Benue State?", options: ["Comrade Andyson Iji Egbodo", "Dr Benson Egbodo", "Chief, Prince, Dr Ogiri Ajene", "Chief Joe Ajah Onah"]},
+                    { q: "Who is the first Senior Advocate of Nigeria (SAN) from Igede Nation?", options: ["Barrister Cassidy Okwu Iji", "Barrister Okwu Ihuma", "Barrister Ode Stanley Iji", "Barrister Etukwu Ona"]},
+                ],
+                answers: [
+                    "February 1976",
+                    "Benue",
+                    "October 10, 1996",
+                    "17th Century, around mid 1600s",
+                    "British colonial domination",
+                    "Idelle (Anyị-Odum)",
+                    "1926 – 1929",
+                    "Agba Akpen",
+                    "11",
+                    "Alege, Bette, Bendi, Bekwara, and Igede",
+                    "Ora, Edo State",
+                    "France",
+                    "2",
+                    "Enyi, Eneyi, Ujor and Igele",
+                    "Rev. Dr. John Ode Adima",
+                    "HRH Chief Abraham Ajene Okpabi",
+                    "Bethesda Hospital, Ikachi-Ukpa, Oju LGC",
+                    "Methodist High School, Ainu",
+                    "War and conflicts",
+                    "Professor Ode Ojowu",
+                    "River Oyongo",
+                    "Chief Hon. Atini Idikwu",
+                    "1st October 1996",
+                    "LGEA Pilot Primary School, Ibilla Centre",
+                    "Mr Moses Ajima",
+                    "Mrs. Erebe Agnes Uleko",
+                    "Mrs. Evelyn Ichiko Okwe",
+                    "Prof. John Odoh Ibu",
+                    "Chief, Prince, Dr Ogiri Ajene",
+                    "Barrister Etukwu Ona"
+                ],
+            }
+        };
+
+        // DOM Elements
+        const userRegView = document.getElementById('userRegView');
+        const quizView = document.getElementById('quizView');
+        const resultView = document.getElementById('resultView');
+
+        const userNameInput = document.getElementById('userName');
+        const enterBtn = document.getElementById('enterBtn');
+        const welcomeMessage = document.getElementById('welcomeMessage');
+        const userNameDisplay = document.getElementById('userNameDisplay');
+        const cultureBtn = document.getElementById('cultureBtn');
+        const historyBtn = document.getElementById('historyBtn');
+
+        const sectionTitle = document.getElementById('sectionTitle');
+        const progressBar = document.getElementById('progressBar');
+        const questionCounter = document.getElementById('questionCounter');
+        const answeredCounter = document.getElementById('answeredCounter');
+        const questionText = document.getElementById('questionText');
+        const optionsContainer = document.getElementById('optionsContainer');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const quitBtn = document.getElementById('quitBtn');
+
+        const resultUserName = document.getElementById('resultUserName');
+        const answeredSummary = document.getElementById('answeredSummary');
+        const scoreSummary = document.getElementById('scoreSummary');
+        const resultMessage = document.getElementById('resultMessage');
+        const nextSectionBtn = document.getElementById('nextSectionBtn');
+        const restartBtn = document.getElementById('restartBtn');
+
+        // Quiz State
+        let userName = '';
+        let currentSection = '';
+        let currentQuestionIndex = 0;
+        let userAnswers = new Array(QUESTIONS_PER_SECTION).fill(null);
+        let answerStatus = new Array(QUESTIONS_PER_SECTION).fill(null);
+        let score = 0;
+
+        // Event Listeners
+        enterBtn.addEventListener('click', validateName);
+        cultureBtn.addEventListener('click', () => selectSection('culture'));
+        historyBtn.addEventListener('click', () => selectSection('history'));
+        prevBtn.addEventListener('click', prevQuestion);
+        nextBtn.addEventListener('click', handleNextButton);
+        quitBtn.addEventListener('click', quitQuiz);
+        restartBtn.addEventListener('click', restartQuiz);
+        nextSectionBtn.addEventListener('click', nextSection);
+
+        // Handle back button on mobile
+        window.addEventListener('popstate', function(event) {
+            if (!userRegView.classList.contains('hidden')) {
+                // If we're on the registration view, close the app
+                window.close();
+            } else {
+                // Otherwise, go back to registration
+                restartQuiz();
+            }
+        });
+
+        // Functions
+        function validateName() {
+            if (!userNameInput.value.trim()) {
+                alert('Please enter your name');
+                return;
+            }
+            
+            userName = userNameInput.value.trim();
+            userNameDisplay.textContent = userName;
+            
+            // Hide the input and button, show only welcome message
+            userNameInput.style.display = 'none';
+            enterBtn.style.display = 'none';
+            document.querySelector('#userRegView .card h2').style.display = 'none';
+            
+            welcomeMessage.classList.remove('hidden');
+        }
+
+        function selectSection(section) {
+            currentSection = section;
+            sectionTitle.textContent = section.toUpperCase() + ' SECTION';
+            
+            // Reset quiz state
+            currentQuestionIndex = 0;
+            userAnswers = new Array(QUESTIONS_PER_SECTION).fill(null);
+            answerStatus = new Array(QUESTIONS_PER_SECTION).fill(null);
+            
+            // Show quiz view
+            userRegView.classList.add('hidden');
+            quizView.classList.remove('hidden');
+            
+            // Load first question
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            // Update progress
+            progressBar.style.width = `${((currentQuestionIndex + 1) / QUESTIONS_PER_SECTION) * 100}%`;
+            questionCounter.textContent = `Question ${currentQuestionIndex + 1} of ${QUESTIONS_PER_SECTION}`;
+            answeredCounter.textContent = `Answered: ${countAnswered()} / ${QUESTIONS_PER_SECTION}`;
+            
+            // Load question and options
+            const currentQuestion = sections[currentSection].questions[currentQuestionIndex];
+            questionText.textContent = currentQuestion.q;
+            
+            // Clear previous options
+            optionsContainer.innerHTML = '';
+            
+            // Create option elements
+            currentQuestion.options.forEach((option, index) => {
+                const optionElement = document.createElement('div');
+                optionElement.className = 'option';
+                
+                if (userAnswers[currentQuestionIndex] === option) {
+                    optionElement.classList.add('selected');
+                }
+                
+                if (answerStatus[currentQuestionIndex] === true && userAnswers[currentQuestionIndex] === option) {
+                    optionElement.classList.add('correct');
+                } else if (answerStatus[currentQuestionIndex] === false && userAnswers[currentQuestionIndex] === option) {
+                    optionElement.classList.add('incorrect');
+                }
+                
+                if (answerStatus[currentQuestionIndex] !== null && userAnswers[currentQuestionIndex] !== option) {
+                    optionElement.classList.add('disabled');
+                }
+                
+                optionElement.innerHTML = `
+                    <div class="radio-circle">
+                        <div class="radio-dot"></div>
+                    </div>
+                    <span class="option-text">${option}</span>
+                `;
+                
+                // Add status mark if answered
+                if (answerStatus[currentQuestionIndex] !== null) {
+                    const correctAnswer = sections[currentSection].answers[currentQuestionIndex];
+                    
+                    if (option === correctAnswer) {
+                        optionElement.innerHTML += `<span class="option-status correct-mark">✓</span>`;
+                    } else if (userAnswers[currentQuestionIndex] === option) {
+                        optionElement.innerHTML += `<span class="option-status incorrect-mark">✗</span>`;
+                    }
+                }
+                
+                // Add click event only if question not answered yet
+                if (answerStatus[currentQuestionIndex] === null) {
+                    optionElement.addEventListener('click', () => handleAnswerSelection(option));
+                }
+                
+                optionsContainer.appendChild(optionElement);
+            });
+            
+            // Update button states
+            prevBtn.disabled = currentQuestionIndex === 0;
+            
+            if (currentQuestionIndex === QUESTIONS_PER_SECTION - 1) {
+                nextBtn.textContent = 'Submit';
+            } else {
+                nextBtn.textContent = 'Next';
+            }
+        }
+
+        function handleAnswerSelection(option) {
+            // If this question has already been answered, don't allow changes
+            if (answerStatus[currentQuestionIndex] !== null) {
+                return;
+            }
+            
+            userAnswers[currentQuestionIndex] = option;
+            
+            // Check if answer is correct
+            const correctAnswer = sections[currentSection].answers[currentQuestionIndex];
+            answerStatus[currentQuestionIndex] = option === correctAnswer;
+            
+            // Reload question to update UI
+            loadQuestion();
+        }
+
+        function prevQuestion() {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                loadQuestion();
+            }
+        }
+
+        function handleNextButton() {
+            if (currentQuestionIndex < QUESTIONS_PER_SECTION - 1) {
+                nextQuestion();
+            } else {
+                submitQuiz();
+            }
+        }
+
+        function nextQuestion() {
+            if (currentQuestionIndex < QUESTIONS_PER_SECTION - 1) {
+                currentQuestionIndex++;
+                loadQuestion();
+            }
+        }
+
+        function submitQuiz() {
+            // Calculate score
+            let answeredCount = 0;
+            let correctCount = 0;
+            
+            userAnswers.forEach((answer, idx) => {
+                if (answer !== null) {
+                    answeredCount++;
+                    if (answer === sections[currentSection].answers[idx]) {
+                        correctCount++;
+                    }
+                }
+            });
+            
+            score = answeredCount > 0 ? correctCount : 0;
+            
+            // Show result view
+            quizView.classList.add('hidden');
+            resultView.classList.remove('hidden');
+            
+            // Update result content
+            resultUserName.textContent = userName;
+            
+            if (answeredCount > 0) {
+                answeredSummary.textContent = `You answered ${answeredCount} out of ${QUESTIONS_PER_SECTION} questions.`;
+                scoreSummary.textContent = `Your score: ${score}/${answeredCount} correct (${Math.round((score / answeredCount) * 100)}%)`;
+                
+                if (score / answeredCount >= PASSING_SCORE) {
+                    resultMessage.textContent = '🎉 Congratulations!';
+                } else {
+                    resultMessage.textContent = '💪 Keep trying!';
+                }
+            } else {
+                answeredSummary.textContent = `You didn't answer any questions in this section.`;
+                scoreSummary.textContent = '';
+                resultMessage.textContent = '';
+            }
+            
+            // Show/hide next section button
+            const sectionsList = Object.keys(sections);
+            const currentSectionIndex = sectionsList.indexOf(currentSection);
+            
+            if (currentSectionIndex < sectionsList.length - 1) {
+                nextSectionBtn.classList.remove('hidden');
+            } else {
+                nextSectionBtn.classList.add('hidden');
+            }
+        }
+
+        function nextSection() {
+            const sectionsList = Object.keys(sections);
+            const currentSectionIndex = sectionsList.indexOf(currentSection);
+            
+            if (currentSectionIndex < sectionsList.length - 1) {
+                selectSection(sectionsList[currentSectionIndex + 1]);
+            }
+        }
+
+        function restartQuiz() {
+            userName = '';
+            currentSection = '';
+            currentQuestionIndex = 0;
+            userAnswers = new Array(QUESTIONS_PER_SECTION).fill(null);
+            answerStatus = new Array(QUESTIONS_PER_SECTION).fill(null);
+            score = 0;
+            
+            userNameInput.value = '';
+            welcomeMessage.classList.add('hidden');
+            
+            // Restore input and button visibility
+            userNameInput.style.display = '';
+            enterBtn.style.display = '';
+            document.querySelector('#userRegView .card h2').style.display = '';
+            
+            resultView.classList.add('hidden');
+            quizView.classList.add('hidden');
+            userRegView.classList.remove('hidden');
+        }
+
+        function quitQuiz() {
+            // Create a custom confirmation dialog
+            const dialog = document.createElement('div');
+            dialog.style.position = 'fixed';
+            dialog.style.top = '0';
+            dialog.style.left = '0';
+            dialog.style.right = '0';
+            dialog.style.bottom = '0';
+            dialog.style.backgroundColor = 'rgba(0,0,0,0.5)';
+            dialog.style.display = 'flex';
+            dialog.style.justifyContent = 'center';
+            dialog.style.alignItems = 'center';
+            dialog.style.zIndex = '1000';
+            
+            dialog.innerHTML = `
+                <div style="background: white; padding: 20px; border-radius: 8px; max-width: 300px; text-align: center;">
+                    <p style="margin-bottom: 20px;">Would you like to quit the quiz?</p>
+                    <div style="display: flex; justify-content: center; gap: 10px;">
+                        <button id="confirmQuit" style="padding: 8px 16px; background: #ef4444; color: white; border: none; border-radius: 4px;">Yes</button>
+                        <button id="cancelQuit" style="padding: 8px 16px; background: #4a1d96; color: white; border: none; border-radius: 4px;">No</button>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(dialog);
+            
+            document.getElementById('confirmQuit').addEventListener('click', () => {
+                document.body.removeChild(dialog);
+                restartQuiz();
+            });
+            
+            document.getElementById('cancelQuit').addEventListener('click', () => {
+                document.body.removeChild(dialog);
+            });
+        }
+
+        function countAnswered() {
+            return userAnswers.filter(answer => answer !== null).length;
+        }
+    </script>
+</body>
+</html>
