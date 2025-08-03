@@ -4,8 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Igede Smart Tutor</title>
+    
+    <!-- Embedded PWA Manifest -->
+    <link rel="manifest" href="data:application/manifest+json;base64,ewogICJuYW1lIjogIklnZWRlIFNtYXJ0IFR1dG9yIiwKICAic2hvcnRfbmFtZSI6ICJJZ2VkZSBUdXRvciIsCiAgInN0YXJ0X3VybCI6ICIuIiwKICAiZGlzcGxheSI6ICJzdGFuZGFsb25lIiwKICAiYmFja2dyb3VuZF9jb2xvciI6ICIjMGYwNjk2IiwKICAidGhlbWVfY29sb3IiOiAiIzBmMDY5NiIKfQ==">
+    
+    <meta name="theme-color" content="#0f0696">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    
     <style>
-        /* Base Styles */
         * {
             margin: 0;
             padding: 0;
@@ -316,9 +323,29 @@
                 justify-content: center;
             }
         }
+
+        /* Offline notification */
+        .offline-notification {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #ef4444;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            display: none;
+            z-index: 1000;
+        }
     </style>
 </head>
 <body>
+    <!-- Offline notification -->
+    <div class="offline-notification" id="offlineNotification">
+        You are currently offline. Some features may be limited.
+    </div>
+
     <div class="container">
         <div class="header">
             <h1>Welcome To Igede Smart Assistant</h1>
@@ -397,22 +424,22 @@
         const sections = {
             culture: {
                 questions: [
-                    { q: "What is the most popular traditional festival in Igede land?", options: ["Igede Agba", "Durbar", "Igede Egwu", "Ofala"],},
-                    { q: "The Supreme Traditional Council Meeting of the Igede Elders is called______?", options: ["Ihi", "Erhu", "Aligwu", "Epwedii"],},
+                    { q: "What is the most popular traditional festival in Igede land?", options: ["Igede Agba", "Durbar", "Igede Egwu", "Ofala"] },
+                    { q: "The Supreme Traditional Council Meeting of the Igede Elders is called______?", options: ["Ihi", "Erhu", "Aligwu", "Epwedii"] },
                     { q: "Which colours are traditionally featured in Ogodogodo, the principal cultural attire of the Igede people?", options: ["Blue, White and Black", "Black and White", "Red, Black and White", "Blue, White and Green"] },
                     { q: "Which language do the Igede people speak?", options: ["Igede", "Tiv", "Idoma", "Hausa"] },
-                    { q: "Which of the following market days is traditionally designated for the celebration of the Igede Agba Festival?", options: ["The first Ihiobilla market day in September", "The first Ihio market day in September", "The first Ihiokwu market day in September", "The first Ih’igile market day in September"] },
+                    { q: "Which of the following market days is traditionally designated for the celebration of the Igede Agba Festival?", options: ["The first Ihiobilla market day in September", "The first Ihio market day in September", "The first Ihiokwu market day in September", "The first Ih'igile market day in September"] },
                     { q: "Which food crop is traditionally honored as the king of all food crops in Igede culture?", options: ["Iju", "Achi", "Imana", "Otakom"] },
-                    { q: "What is the traditional method of storytelling in Igede culture?", options: ["Writing", "Oral tradition", "Stone carvings", "Dance"],},
+                    { q: "What is the traditional method of storytelling in Igede culture?", options: ["Writing", "Oral tradition", "Stone carvings", "Dance"] },
                     { q: "What is a common Igede soup delicacy?", options: ["Ehia", "Ugbodu", "Apwu", "Ibehi"] },
-                    { q: "What does the kola nut symbolize in Igede culture?", options: ["War", "Death", "Wealth", "Peace and hospitality"],},
-                    { q: "Which of the following signifies the official recognition of marriage between a man and a woman in Igede tradition?", options: ["Sharing kola nuts and drinking palm wine", "Receiving a pastor’s blessing during a church ceremony", "Payment of dowry and firing of traditional gunshots", "Celebrating with traditional songs and dances"],},
-                    { q: "Idelle, Igabwu, Itakpa, and Oju are modern names of certain clans in the Igede Nation. Which of the following options correctly lists their traditional names in the same order?", options: ["Anyi-Odum, Okpalotu, Ada-Otakpa, and Onyi-Okpogo", "Idelle, Igabwu, Itakpa, and Oju", "Ega, Ameka, Ukpute, and Odaleko", "Adiko, Obijago, Ogengeng, and Odubo"],},
-                    { q: "Which of the following villages is traditionally recognized as the rightful host of the Epwedii festival in the Igede Nation?", options: ["Obarike-Ito", "Ochodu-Ukpa", "Oju Local Government Secretariat", "Ojegbe"],},
-                    { q: "According to Igede culture, what typically marks the beginning of every meeting or gathering?", options: ["Libations", "Incantations", "Reading the Holy Bible", "Praise and Worship"],},
-                    { q: "Which of the following is most highly valued in Igede culture?", options: ["Wealth (Money)", "Physical appearance (Beauty and Handsomeness)", "Ownership of property (Land and Houses)", "Integrity and good name (Character and Reputation)"],},
-                    { q: "According to Igede tradition, what is the primary basis for sharing items among people at a gathering?", options: ["Seniority in government positions", "Seniority in age", "Size of personal wealth","He must be a warrior"],},
-                    { q: "__________ leaf is used as a symbol of peace in Igede culture?", options: ["Upwu Engwu", "Upwu Ugwu", "Upwu Utu", "Upwu Ejuju"],},
+                    { q: "What does the kola nut symbolize in Igede culture?", options: ["War", "Death", "Wealth", "Peace and hospitality"] },
+                    { q: "Which of the following signifies the official recognition of marriage between a man and a woman in Igede tradition?", options: ["Sharing kola nuts and drinking palm wine", "Receiving a pastor's blessing during a church ceremony", "Payment of dowry and firing of traditional gunshots", "Celebrating with traditional songs and dances"] },
+                    { q: "Idelle, Igabwu, Itakpa, and Oju are modern names of certain clans in the Igede Nation. Which of the following options correctly lists their traditional names in the same order?", options: ["Anyi-Odum, Okpalotu, Ada-Otakpa, and Onyi-Okpogo", "Idelle, Igabwu, Itakpa, and Oju", "Ega, Ameka, Ukpute, and Odaleko", "Adiko, Obijago, Ogengeng, and Odubo"] },
+                    { q: "Which of the following villages is traditionally recognized as the rightful host of the Epwedii festival in the Igede Nation?", options: ["Obarike-Ito", "Ochodu-Ukpa", "Oju Local Government Secretariat", "Ojegbe"] },
+                    { q: "According to Igede culture, what typically marks the beginning of every meeting or gathering?", options: ["Libations", "Incantations", "Reading the Holy Bible", "Praise and Worship"] },
+                    { q: "Which of the following is most highly valued in Igede culture?", options: ["Wealth (Money)", "Physical appearance (Beauty and Handsomeness)", "Ownership of property (Land and Houses)", "Integrity and good name (Character and Reputation)"] },
+                    { q: "According to Igede tradition, what is the primary basis for sharing items among people at a gathering?", options: ["Seniority in government positions", "Seniority in age", "Size of personal wealth","He must be a warrior"] },
+                    { q: "__________ leaf is used as a symbol of peace in Igede culture?", options: ["Upwu Engwu", "Upwu Ugwu", "Upwu Utu", "Upwu Ejuju"] },
                     { q: "How many Market are in Igede?", options: ["2", "3", "5", "4"] },
                     { q: "According to Igede cultural practices, which is identified as the first market day?", options: ["Ihiejwo", "Ihigile", "Ihio", "Ihiobila"] },
                     { q: "The highest Traditional Stool of the Igede People is called?", options: ["Ad'Oju ", "Ad'Obi ", "Ad'Utu", "Ad'Agba"] },
@@ -425,15 +452,15 @@
                     { q: "Ada, Anchim, Oye, Ukpa and Oboru are modern names of some Clans in Igede Nation. Which one of the following options represents their traditional names in the order they appear above?", options: ["Uchuo, Okutungbe, Ochodu, Akpachayi and Ohuhu", "Ohirigwe, Omu, Andibilla, Ojokwe and Ogore", "Adum, Ohuma, Uchenyum, Obusa and Ikachi", "Ada, Ocheche, Ugbodu, Amono and Ogbagba"] },
                     { q: "What is the name of the most important traditional cloth used in Igede cultural attire?", options: ["Ogodogodo", "Apwu", "Oba", "Ugba odakwuru"] },
                     { q: "In Igede culture, what is the traditional term used to refer to an age grade?", options: ["Alikpa", "Idirihu", "Ikolobia", "Iyeno"] },
-                    { q: "What is the traditional name for the elders’ council in Igede society?", options: ["Ikolobia", "Alikpa", "Aligwu", "Igabwo"] },
-                    { q: "Which of the following options correctly represents the traditional sequence of market days in Igede culture, from the first to the last?", options: ["Ihio, Ihiobilla, Ihiejwo, Ihiokwu, Ihigile", "Ihiobilla, Ihio, Ihiokwu, Ihigile, Ihio", "Ihigile, Ihio, Ihiobilla, Ihiejwo, Ihiokwu", "Ihiejwo, Ihigile, Ihio, Ihiobilla, Ihiokwu"] },		
+                    { q: "What is the traditional name for the elders' council in Igede society?", options: ["Ikolobia", "Alikpa", "Aligwu", "Igabwo"] },
+                    { q: "Which of the following options correctly represents the traditional sequence of market days in Igede culture, from the first to the last?", options: ["Ihio, Ihiobilla, Ihiejwo, Ihiokwu, Ihigile", "Ihiobilla, Ihio, Ihiokwu, Ihigile, Ihio", "Ihigile, Ihio, Ihiobilla, Ihiejwo, Ihiokwu", "Ihiejwo, Ihigile, Ihio, Ihiobilla, Ihiokwu"] }
                 ],
                 answers: [
                     "Igede Agba",
                     "Epwedii",
                     "Blue, White and Black",
                     "Igede",
-                    "The first Ih’igile market day in September",
+                    "The first Ih'igile market day in September",
                     "Iju",
                     "Oral tradition",
                     "Ehia",
@@ -459,40 +486,40 @@
                     "Alikpa",
                     "Igabwo",
                     "Ihigile, Ihio, Ihiobilla, Ihiejwo, Ihiokwu"
-                ],
+                ]
             },
             history: {
                 questions: [
-                    { q: "Oju Local Government Council was created in which year?", options: ["January 1976", "February 1976", "March 1976", "April 1976"]},
-                    { q: "The Igede people are predominantly found in which Nigerian state?", options: ["Kogi", "Benue", "Plateau", "Taraba"]},
-                    { q: "The creation of Obi Local Government Council took place in _______?",  options: ["October 1, 1990", "January 15, 1966", "October 10, 1996", "February 14, 2000"]},
-                    { q: "The migration of the Igede people from Ora to Opiny’Igede occurred during which period?",  options: ["16th Century, around mid 1500s", "17th Century, around mid 1600s", "18th Century, around mid 1700s", "19th Century, around mid 1800s"]},
+                    { q: "Oju Local Government Council was created in which year?", options: ["January 1976", "February 1976", "March 1976", "April 1976"] },
+                    { q: "The Igede people are predominantly found in which Nigerian state?", options: ["Kogi", "Benue", "Plateau", "Taraba"] },
+                    { q: "The creation of Obi Local Government Council took place in _______?", options: ["October 1, 1990", "January 15, 1966", "October 10, 1996", "February 14, 2000"] },
+                    { q: "The migration of the Igede people from Ora to Opiny'Igede occurred during which period?", options: ["16th Century, around mid 1500s", "17th Century, around mid 1600s", "18th Century, around mid 1700s", "19th Century, around mid 1800s"] },
                     { q: "Identify the principal grievance that prompted the Ogbuloko War against British forces:", options: ["British discrimination", "Land disputes", "British colonial domination", "Imposition of kingship"] },
                     { q: "Ogbuloko Ukpata Ogoji hailed from which Igede clan?", options: ["Ada (Ada)", "Ụkpa (Amọnọ)", "Oye (Ugbodu)", "Idelle (Anyị-Odum)"] },
-                    { q: "During which of the following periods was the Ogbuloko War fought?", options: ["1926 – 1929", "1914 – 1917", "1932 – 1939", "1921 – 1925"]},
-                    { q: "Which historical figure is honored as the forefather of the Igede people?", options: ["Othman Dan Fodio", "Chief Jeremiah Awolowo", "Agba Akpen", "Chief Michael Okpara"]},
-                    { q: "According to Igede oral history, how many siblings did the ancestral father of the Igede people have?", options: ["3", "5", "7", "11"]},   
-                    { q: "Who among the following were children of Agba Akpen?", options: ["Ikpoto, Jukun, Hausa, Igede and Bachama", "Alege, Bette, Bendi, Bekwara, and Igede", "Igede, Agatu, Hausa, Yoruba and Igbo", "Igede, Igala, Tiv, Igbira and Gbagi"]},   
-                    { q: "According to tradition, which place is recognized as the original homeland of the Igede ethnic group?", options: ["Ora, Edo State", "Ofa, Kwara State", "Lokoja, Kogi State", "Abuja, Federal Capital Territory"]},
-            	    { q: "Ambassador Ogah Okwoche, the first and only Igede person appointed as a Nigerian ambassador, was posted to which country?", options: ["United States of America", "Republic of South Africa", "United Kingdom", "France"]},
-                    { q: "What is the total number of Local Government Councils predominantly occupied by the Igede people in Benue State?",options: ["1", "2", "3", "4"]},
-                    { q: "Ogbuloko Ukpata Ogoji married four wives. What were their names?",  options: ["Enyi, Eneyi, Ujor and Igele", "Erima, Ichiko, Eneyi and Okpa", "Adiya, Inori, Uregwu and Okpeje",  "Adiya, Okpunyi, Igele and Ujor",]}, 
-                    { q: "Who is the notable Igede son credited with translating the first Igede Bible from English language?", options: ["Rev. Dr. John Ikoni", "Rev. Dr. John Ode Adima", "Rev. David Igiri Uwondo", "Rev. Peter Onahi Adikpe"]},
-                    { q: "Who among the following Igede individuals served as the traditional ruler of the entire Idoma Kingdom?", options: ["Chief Prince Dr. Ogiri Ajene", "Hon. Chief Ogo Okpabi", "HRH Chief Ikande Idikwu", "HRH Chief Abraham Ajene Okpabi"]},
-                    { q: "Which one of the following is the first Hospital/Clinic in Igede land?", options: ["General Hospital, Oju, Oju LGC", "Bethesda Hospital, Ikachi-Ukpa, Oju LGC", "General Hospital, Ito, Obi LGC", "The Health Centre, Obarike Ito, Obi LGC"]},
-                    { q: "What is the name of the first secondary school established in Igede land?", options: ["Saint Joseph’s Secondary School, Ito", "Methodist High School, Ainu", "Government Secondary School, Ikachi", "Government Secondary School, Obusa"]},
-                    { q: "What was the major reason for the Igede migration from Ora?",  options: ["War and conflicts", "Search for fertile land", "Religious expansion", "Trade opportunities"]}, 
-                    { q: "What is the name of the first Igede person to be appointed Senior Special Adviser to the President of the Federal Republic of Nigeria?", options: ["Professor John Odo Ibu", "Professor John Igoli", "Professor Peter Agogo", "Professor Ode Ojowu"]},   
-                    { q: "What is the name of the river that parted into seven tributaries during the Igede people's migration, allowing them to safely cross into their present land after spiritual sacrifices by the elders?",  options: ["River Niger", "River Oyongo", "River Benue", "River Katsina Ala"]},     
-                    { q: "Who was the first individual to represent the Igede people in the Nigerian Federal House of Representatives?", options: ["Chief Hon. Atini Idikwu", "RT. Hon. David Agada Ogewu", "Chief San Okwu", "Chief Bright Igodo"]},       
-                    { q: "On what date was Obi Local Government Council carved out of the Oju Local Government Council?", options: ["1st October 1996", "1st October 1997", "1st October 1998", "1st October 1999"]},    
-                    { q: "The first primary school in Igede Land is which of the following?", options: ["LGEA Primary School, Ukpa Centre", "LGEA Primary School, Ainu Centre", "LGEA Pilot Primary School, Ibilla Centre", "LGEA Primary School, Ohuhu, Owo"]},
-                    { q: "Who was the first Igede person to be appointed a Commissioner in the Government of Benue State?",  options: ["Prof. John Odo Ibu", "Amb. Ogah Okwoche", "Mr Moses Ajima", "Prof. Gabriel Agwu Igwe"]},
-                    { q: "Who was the first female Chairperson of Obi Local Government Council?", options: ["Justice Mrs. Deborah Musa", "Mrs. Evelyn Okwe", "Mrs. Erebe Agnes Uleko", "Pharm. Mrs. Margret Oga, Ph.D"]},
-                    { q: "Who was the first female Chairperson of Oju Local Government Council?", options: ["Dr Pastor Mrs Becky Enenche", "Mrs. Evelyn Ichiko Okwe", "Justice Mrs. Deborah Musa", "Dr. Mrs Kate Ogah"]},  
-                    { q: "What is the name of the first Professor in Igede Land?", options: ["Prof. John Odoh Ibu", "Prof Agwu G. Igwue,", "Prof. Isaac Ode", "Prof. Ode Ojowu"]},
-                    { q: "_____ was the first Igede indigene to serve as the Deputy Governor of Benue State?", options: ["Comrade Andyson Iji Egbodo", "Dr Benson Egbodo", "Chief, Prince, Dr Ogiri Ajene", "Chief Joe Ajah Onah"]},
-                    { q: "Who is the first Senior Advocate of Nigeria (SAN) from Igede Nation?", options: ["Barrister Cassidy Okwu Iji", "Barrister Okwu Ihuma", "Barrister Ode Stanley Iji", "Barrister Etukwu Ona"]},
+                    { q: "During which of the following periods was the Ogbuloko War fought?", options: ["1926 – 1929", "1914 – 1917", "1932 – 1939", "1921 – 1925"] },
+                    { q: "Which historical figure is honored as the forefather of the Igede people?", options: ["Othman Dan Fodio", "Chief Jeremiah Awolowo", "Agba Akpen", "Chief Michael Okpara"] },
+                    { q: "According to Igede oral history, how many siblings did the ancestral father of the Igede people have?", options: ["3", "5", "7", "11"] },
+                    { q: "Who among the following were children of Agba Akpen?", options: ["Ikpoto, Jukun, Hausa, Igede and Bachama", "Alege, Bette, Bendi, Bekwara, and Igede", "Igede, Agatu, Hausa, Yoruba and Igbo", "Igede, Igala, Tiv, Igbira and Gbagi"] },
+                    { q: "According to tradition, which place is recognized as the original homeland of the Igede ethnic group?", options: ["Ora, Edo State", "Ofa, Kwara State", "Lokoja, Kogi State", "Abuja, Federal Capital Territory"] },
+                    { q: "Ambassador Ogah Okwoche, the first and only Igede person appointed as a Nigerian ambassador, was posted to which country?", options: ["United States of America", "Republic of South Africa", "United Kingdom", "France"] },
+                    { q: "What is the total number of Local Government Councils predominantly occupied by the Igede people in Benue State?", options: ["1", "2", "3", "4"] },
+                    { q: "Ogbuloko Ukpata Ogoji married four wives. What were their names?", options: ["Enyi, Eneyi, Ujor and Igele", "Erima, Ichiko, Eneyi and Okpa", "Adiya, Inori, Uregwu and Okpeje", "Adiya, Okpunyi, Igele and Ujor"] },
+                    { q: "Who is the notable Igede son credited with translating the first Igede Bible from English language?", options: ["Rev. Dr. John Ikoni", "Rev. Dr. John Ode Adima", "Rev. David Igiri Uwondo", "Rev. Peter Onahi Adikpe"] },
+                    { q: "Who among the following Igede individuals served as the traditional ruler of the entire Idoma Kingdom?", options: ["Chief Prince Dr. Ogiri Ajene", "Hon. Chief Ogo Okpabi", "HRH Chief Ikande Idikwu", "HRH Chief Abraham Ajene Okpabi"] },
+                    { q: "Which one of the following is the first Hospital/Clinic in Igede land?", options: ["General Hospital, Oju, Oju LGC", "Bethesda Hospital, Ikachi-Ukpa, Oju LGC", "General Hospital, Ito, Obi LGC", "The Health Centre, Obarike Ito, Obi LGC"] },
+                    { q: "What is the name of the first secondary school established in Igede land?", options: ["Saint Joseph's Secondary School, Ito", "Methodist High School, Ainu", "Government Secondary School, Ikachi", "Government Secondary School, Obusa"] },
+                    { q: "What was the major reason for the Igede migration from Ora?", options: ["War and conflicts", "Search for fertile land", "Religious expansion", "Trade opportunities"] },
+                    { q: "What is the name of the first Igede person to be appointed Senior Special Adviser to the President of the Federal Republic of Nigeria?", options: ["Professor John Odo Ibu", "Professor John Igoli", "Professor Peter Agogo", "Professor Ode Ojowu"] },
+                    { q: "What is the name of the river that parted into seven tributaries during the Igede people's migration, allowing them to safely cross into their present land after spiritual sacrifices by the elders?", options: ["River Niger", "River Oyongo", "River Benue", "River Katsina Ala"] },
+                    { q: "Who was the first individual to represent the Igede people in the Nigerian Federal House of Representatives?", options: ["Chief Hon. Atini Idikwu", "RT. Hon. David Agada Ogewu", "Chief San Okwu", "Chief Bright Igodo"] },
+                    { q: "On what date was Obi Local Government Council carved out of the Oju Local Government Council?", options: ["1st October 1996", "1st October 1997", "1st October 1998", "1st October 1999"] },
+                    { q: "The first primary school in Igede Land is which of the following?", options: ["LGEA Primary School, Ukpa Centre", "LGEA Primary School, Ainu Centre", "LGEA Pilot Primary School, Ibilla Centre", "LGEA Primary School, Ohuhu, Owo"] },
+                    { q: "Who was the first Igede person to be appointed a Commissioner in the Government of Benue State?", options: ["Prof. John Odo Ibu", "Amb. Ogah Okwoche", "Mr Moses Ajima", "Prof. Gabriel Agwu Igwe"] },
+                    { q: "Who was the first female Chairperson of Obi Local Government Council?", options: ["Justice Mrs. Deborah Musa", "Mrs. Evelyn Okwe", "Mrs. Erebe Agnes Uleko", "Pharm. Mrs. Margret Oga, Ph.D"] },
+                    { q: "Who was the first female Chairperson of Oju Local Government Council?", options: ["Dr Pastor Mrs Becky Enenche", "Mrs. Evelyn Ichiko Okwe", "Justice Mrs. Deborah Musa", "Dr. Mrs Kate Ogah"] },
+                    { q: "What is the name of the first Professor in Igede Land?", options: ["Prof. John Odoh Ibu", "Prof Agwu G. Igwue,", "Prof. Isaac Ode", "Prof. Ode Ojowu"] },
+                    { q: "_____ was the first Igede indigene to serve as the Deputy Governor of Benue State?", options: ["Comrade Andyson Iji Egbodo", "Dr Benson Egbodo", "Chief, Prince, Dr Ogiri Ajene", "Chief Joe Ajah Onah"] },
+                    { q: "Who is the first Senior Advocate of Nigeria (SAN) from Igede Nation?", options: ["Barrister Cassidy Okwu Iji", "Barrister Okwu Ihuma", "Barrister Ode Stanley Iji", "Barrister Etukwu Ona"] }
                 ],
                 answers: [
                     "February 1976",
@@ -525,7 +552,7 @@
                     "Prof. John Odoh Ibu",
                     "Chief, Prince, Dr Ogiri Ajene",
                     "Barrister Etukwu Ona"
-                ],
+                ]
             }
         };
 
@@ -558,6 +585,8 @@
         const nextSectionBtn = document.getElementById('nextSectionBtn');
         const restartBtn = document.getElementById('restartBtn');
 
+        const offlineNotification = document.getElementById('offlineNotification');
+
         // Quiz State
         let userName = '';
         let currentSection = '';
@@ -586,6 +615,94 @@
                 restartQuiz();
             }
         });
+
+        // Check connection status
+        function checkConnection() {
+            if (navigator.onLine) {
+                offlineNotification.style.display = 'none';
+            } else {
+                offlineNotification.style.display = 'block';
+            }
+        }
+
+        // Initialize connection check
+        window.addEventListener('online', checkConnection);
+        window.addEventListener('offline', checkConnection);
+        checkConnection(); // Check on initial load
+
+        // Service Worker Registration
+        if ('serviceWorker' in navigator) {
+            const swCode = `
+                const CACHE_NAME = 'igede-tutor-v1';
+                const ASSETS_TO_CACHE = [
+                    '/',
+                    '/index.html'
+                ];
+
+                self.addEventListener('install', (event) => {
+                    event.waitUntil(
+                        caches.open(CACHE_NAME)
+                            .then((cache) => {
+                                return cache.addAll(ASSETS_TO_CACHE);
+                            })
+                    );
+                });
+
+                self.addEventListener('fetch', (event) => {
+                    event.respondWith(
+                        caches.match(event.request)
+                            .then((response) => {
+                                if (response) {
+                                    return response;
+                                }
+                                return fetch(event.request);
+                            })
+                    );
+                });
+
+                self.addEventListener('activate', (event) => {
+                    const cacheWhitelist = [CACHE_NAME];
+                    event.waitUntil(
+                        caches.keys().then((cacheNames) => {
+                            return Promise.all(
+                                cacheNames.map((cacheName) => {
+                                    if (cacheWhitelist.indexOf(cacheName) === -1) {
+                                        return caches.delete(cacheName);
+                                    }
+                                })
+                            );
+                        })
+                    );
+                });
+            `;
+
+            const blob = new Blob([swCode], { type: 'application/javascript' });
+            const swUrl = URL.createObjectURL(blob);
+
+            window.addEventListener('load', function() {
+                navigator.serviceWorker.register(swUrl)
+                    .then(function(registration) {
+                        console.log('ServiceWorker registration successful');
+                    }, function(err) {
+                        console.log('ServiceWorker registration failed: ', err);
+                    });
+            });
+        }
+
+        // For GoNative.io offline support
+        document.addEventListener('deviceready', function() {
+            if (window.cordova && cordova.platformId === 'android') {
+                window.addEventListener('offline', function() {
+                    console.log('App is offline');
+                    offlineNotification.style.display = 'block';
+                }, false);
+                
+                window.addEventListener('online', function() {
+                    console.log('App is online');
+                    offlineNotification.style.display = 'none';
+                }, false);
+            }
+        }, false);
 
         // Functions
         function validateName() {
