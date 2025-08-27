@@ -424,7 +424,7 @@
         const sections = {
             culture: {
                 questions: [
-                    { q: "What is the name of the New Yam Festival of the Igede People?", options: ["Igede Agba", "Durbar", "Igede Egwu", "Ofala"] },
+                    { q: "What is the name of the New Yam Festival of the Igede People?", options: ["Igede Agba", "Durbar", "Igede Egwu", "Ofala"] },
                     { q: "The Supreme Traditional Council Meeting of the Igede Elders is called______?", options: ["Ihi", "Erhu", "Aligwu", "Epwedii"] },
                     { q: "Which colours are traditionally featured in Ogodogodo, the principal cultural attire of the Igede people?", options: ["Blue, White and Black", "Black and White", "Red, Black and White", "Blue, White and Green"] },
                     { q: "Which language do the Igede people speak?", options: ["Igede", "Tiv", "Idoma", "Hausa"] },
@@ -504,7 +504,7 @@
                     { q: "Ambassador Ogah Okwoche, the first and only Igede person appointed as a Nigerian ambassador, was posted to which country?", options: ["United States of America", "Republic of South Africa", "United Kingdom", "France"] },
                     { q: "What is the total number of Local Government Councils predominantly occupied by the Igede people in Benue State?", options: ["1", "2", "3", "4"] },
                     { q: "Ogbuloko Ukpata Ogoji married four wives. What were their names?", options: ["Enyi, Eneyi, Ujor and Igele", "Erima, Ichiko, Eneyi and Okpa", "Adiya, Inori, Uregwu and Okpeje", "Adiya, Okpunyi, Igele and Ujor"] },
-                    { q: "_________ led the team that translated the New Testament Bible from English Language to Igede Language.", options: ["Rev. Dr. John Ikoni", "Rev. Dr. John Ode Adima", "Rev. David Igiri Uwondo", "Rev. Peter Onahi Adikpe"] },
+                    { q: "_________ led the team that translated the New Testament Bible from English Language to Igede Language.", options: ["Rev. Dr. John Ikoni", "Rev. Dr. John Ode Adima", "Rev. David Igiri Uwondo", "Rev. Peter Onahi Adikpe"] },
                     { q: "Who among the following Igede individuals served as the traditional ruler of the entire Idoma Kingdom?", options: ["Chief Prince Dr. Ogiri Ajene", "Hon. Chief Ogo Okpabi", "HRH Chief Ikande Idikwu", "HRH Chief Abraham Ajene Okpabi"] },
                     { q: "Which one of the following is the first Hospital/Clinic in Igede land?", options: ["General Hospital, Oju, Oju LGC", "Bethesda Hospital, Ikachi-Ukpa, Oju LGC", "General Hospital, Ito, Obi LGC", "The Health Centre, Obarike Ito, Obi LGC"] },
                     { q: "What is the name of the first secondary school established in Igede land?", options: ["Saint Joseph's Secondary School, Ito", "Methodist High School, Ainu", "Government Secondary School, Ikachi", "Government Secondary School, Obusa"] },
@@ -519,7 +519,7 @@
                     { q: "Who was the first female Chairperson of Oju Local Government Council?", options: ["Dr Pastor Mrs Becky Enenche", "Mrs. Evelyn Ichiko Okwe", "Justice Mrs. Deborah Musa", "Dr. Mrs Kate Ogah"] },
                     { q: "What is the name of the first Professor in Igede Land?", options: ["Prof. John Odoh Ibu", "Prof Agwu G. Igwue,", "Prof. Isaac Ode", "Prof. Ode Ojowu"] },
                     { q: "_____ was the first Igede indigene to serve as the Deputy Governor of Benue State?", options: ["Comrade Andyson Iji Egbodo", "Dr Benson Egbodo", "Chief, Prince, Dr Ogiri Ajene", "Chief Joe Ajah Onah"] },
-                    { q: "Who is the first Senior Advocate of Nigeria (SAN) from Igede Nation?", options: ["Barrister Cassidy Okwu Iji", "Barrister Meshach Icha Ikpe", " Barrister Peter Ocha Ulegede", "Barrister Etukwu Ona"] }
+                    { q: "Who is the first Senior Advocate of Nigeria (SAN) from Igede Nation?", options: ["Barrister Cassidy Okwu Iji", "Barrister Meshach Icha Ikpe", " Barrister Peter Ocha Ulegede", "Barrister Etukwu Ona"] }
                 ],
                 answers: [
                     "February 1976",
@@ -598,15 +598,9 @@
         // Event Listeners
         enterBtn.addEventListener('click', validateName);
         
-        userNameInput.addEventListener('keydown', function(event) {
-            if (event.key === 'Enter' || event.keyCode === 13) {
-                event.preventDefault();
-                validateName();
-            }
-        });
-        
+        // Fixed Enter key handling
         userNameInput.addEventListener('keypress', function(event) {
-            if (event.key === 'Enter' || event.keyCode === 13) {
+            if (event.key === 'Enter') {
                 event.preventDefault();
                 validateName();
             }
@@ -952,7 +946,7 @@
             dialog.style.alignItems = 'center';
             dialog.style.zIndex = '1000';
             
-            dialog.innerHTML = ``
+            dialog.innerHTML = `
                 <div style="background: white; padding: 20px; border-radius: 8px; max-width: 300px; text-align: center;">
                     <p style="margin-bottom: 20px;">Would you like to quit the quiz?</p>
                     <div style="display: flex; justify-content: center; gap: 10px;">
@@ -960,7 +954,7 @@
                         <button id="cancelQuit" style="padding: 8px 16px; background: #4a1d96; color: white; border: none; border-radius: 4px;">No</button>
                     </div>
                 </div>
-            ``;
+            `;
             
             document.body.appendChild(dialog);
             
