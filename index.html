@@ -597,13 +597,13 @@
 
         // Event Listeners
         enterBtn.addEventListener('click', validateName);
+        userNameInput.addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                validateName();
+            }
+        });
         cultureBtn.addEventListener('click', () => selectSection('culture'));
         historyBtn.addEventListener('click', () => selectSection('history'));
-        prevBtn.addEventListener('click', prevQuestion);
-        nextBtn.addEventListener('click', handleNextButton);
-        quitBtn.addEventListener('click', quitQuiz);
-        restartBtn.addEventListener('click', restartQuiz);
-        nextSectionBtn.addEventListener('click', nextSection);
 
         // Handle back button on mobile
         window.addEventListener('popstate', function(event) {
